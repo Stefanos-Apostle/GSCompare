@@ -37,12 +37,12 @@ geneset_score <- function(counts_matrix, geneset, stat = "Mean") {
 
   ol <- which(tolower(rownames(counts_matrix)) %in% tolower(geneset))
   if (length(ol) > 0) {
-    counts <- counts_matrix[ol, ]
+    counts <- as.matrix(counts_matrix[ol, ])
   }else{
     stop("No genes from this gene set are found in your counts matrix")
   }
 
-  matvar <- MatVar(as.matrix(counts))
+  matvar <- MatVar(counts)
 
   n <- which(is.na(matvar[,1]))
   if (length(n) > 0) {
