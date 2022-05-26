@@ -220,7 +220,45 @@ plot_dimred_seurat <- function(seurat_obj, dimred = "umap", color = "", color_va
 
 
 
+plot_enrichment_seurat <- function(seurat_obj, metadata_col, figure_header = "") {
+  "
+  Function to calculate enrichment of a metadata level for signature 1 vs signature 2
 
+  Inputs:
+    seurat_obj = scRNA seq object with dimensional reduction completed
+    metadata_col = name of meta.data column to be used for geneset enrichment analysis
+    figure_header = character string to add figure_header to output figure
+
+  Output:
+    prints statistical results of fgsea and will plot enrichment curves if statistically significant enrichment is found.
+  "
+  ## creating the ranked list
+  if (("Z_diff" %in% colnames(seurat_obj@meta.data)) == F) {
+    stop("Run compare_geneset_signatures_seurat() to calculate Z_diff before running enrichment analysis")
+  }
+
+  RNK_order <- order(abs(seurat_obj@meta.data$Z_diff), decreasing = T)
+  RNK <- seurat_obj@meta.data$Z_diff[RNK_order]
+  names(RNK) <- rownames(seurat_obj@meta.data)[RNK_order]
+
+  if ((metadata_col %in% colnames(seurat_obj@meta.data)) == F) {
+    stop("metadata_col must be in colnames(seurat_obj@meta.data)")
+  }
+
+  ## creating gene sets
+  genesets <- list()
+  for (i in unique(seurat_obj@meta.data[[metadata_col]])) {
+    genesets[[i]] <- rownames(seurat_obj@meta.data)[which(seurat_obj@meta.data[[metadata_col]] == i)]
+  }
+
+  sets <- cust_sets(genesets)
+
+  res <- fgsea(genesets, RNK, nperm = 10000)
+  print(res)
+  plot <- enrichment_analysis(geneset_list = genesets, fgsea_RNK = RNK, msigdb_sets = sets, figure_header = figure_header)
+
+  return(plot)
+}
 
 
 
