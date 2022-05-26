@@ -16,7 +16,7 @@ MatVar <- function(x) {
     Returns matrix of z-scores by row
   "
   a <- rowSds(x)
-  b <- rowMeans(x)
+  b <- rowMeans(as.matrix(x))
   v <- (x - b) / a
   return(v)
 }
