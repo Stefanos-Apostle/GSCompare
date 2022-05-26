@@ -1,0 +1,159 @@
+---
+title: "GSCompare_vignette"
+author: "Stefanos Apostle"
+date: "5/25/2022"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+
+
+# Installig the Package
+```{r, warning=F, message=F}
+library(devtools)
+install_github("Stefanos-Apostle/GSCompare", force = T)
+library(GSCompare)
+```
+
+# Dependancies
+```{r, warning=F, message=F}
+library(tidyverse)
+library(Seurat)
+library(ggpubr)
+library(ComplexHeatmap)
+library(genefilter)
+library(ggplot2)
+```
+
+
+
+# Loading in Example Data from Luca
+
+> I am loading in a Seurat object that has preprocessing and dimensional reduction previously ran.
+
+```{r, warning=F, message=F}
+load("/Volumes/projects_secondary/mnp/stefanos/tools/R-packages/geneset_signatures/ENV.RData")
+```
+
+
+# Running geneset comparison function
+
+> Here I am running the function to calculate geneset signatures and determine Z_diff, this can be set to access different assay slots of the seurat object so that if data is scaled, batch correctied, or other normalizations, we can access any of these data.
+
+
+
+```{r, warning=F, message=F}
+beta_PATCHseq2 <- compare_geneset_signatures_seurat(seurat_obj = beta_PATCHseq2,
+                                                 geneset_1 = Type1_sig_all_hgnc, 
+                                                 geneset_2 = Type2_sig_all_hgnc,
+                                                 assay = "integrated",
+                                                 stat = "mean")
+```
+
+
+# Plotting the Difference between geneset z-score means 
+
+> The main purpose of this tool is compare gene signatures of a single cell data set, so here we can first calculate the mean z-score for two gene sets, then by calculating the difference between the two, we can determine the magnitude and direction of differential signatures. From this if we rank the cells by this difference z score, we can see if there is an enrichment for a specific condition or relative signature. 
+
+> In the top plot we are seeing both mean z score for each cell ranked by the difference in z score between the two signatures. The bottom panel then shoes the difference between two signatures with the condition colored below. 
+
+```{r, warning=F, message=F}
+plot_z_diff_seurat(beta_PATCHseq2, add_rug = "condition", color_values = c("grey", "red"))
+```
+
+
+> If we are interested in different enrichments of this difference, we can choose any column from the seurat@meta.data to plot on geom_rug by specifying this column by "add_rug". We can also change the colors plotted by specifying "color_values". The length of "color_values" must be the same length as the length of the levels(add_rug). You can see an example below by plotting gender from the meta.data. 
+
+```{r, warning=F, message=F}
+plot_z_diff_seurat(beta_PATCHseq2, add_rug = "gender", color_values = c("pink", "light blue"))
+```
+
+
+
+
+
+# Plotting the dimensional reduction from Seurat Object to visualize rank
+
+> We can then take this ranking that is calculated by the difference between mean z-score of two signatures within a cell, and plot this in a dimensionally reduced space as a better way to understand potential enrichments and signatures. 
+
+
+> We can start by plotting the UMAP colored by condition from seurat_object@meta.data, accompanied by the same UMAP colored by Rank determined from mean z-score difference. Default dimensional reduction is set to 'umap', but if dimensional reduction is run on the seurat_object prior, we can select 'tsne' or 'pca'. Assitionally similar to the function above, we can select what meta.data column to color for and also the specific color values (these must meet the same formatting requirements as mentioned above).
+
+```{r, warning=F, message=F}
+plot_dimred_seurat(beta_PATCHseq2, dimred = "umap", color = "condition", color_values = c("grey", "red"))
+```
+
+
+> Similar to what was done with the previous function, we can see some of these plotting features when we want to color the UMAP by gender to visualize if we have any sex specific enrichments in the Rank of the differential gene set signatures.
+
+
+```{r, warning=F, message=F}
+plot_dimred_seurat(beta_PATCHseq2, color = "gender", color_values = c("pink", "light blue"))
+```
+
+
+# Next Steps
+
+## Luca's Pipeline
+> Luca has created a parallel analysis in which he conducts gene-gene normalization by ranking cell populations for each gene independantly and using these individuals ranks to generate a gene set signature overall ranking in the population. This has separate considerations in analysis but serves as an alternative approach to understand the data space. This could be incorporated into this pipeline so that they can easily be run in parallel. 
+
+## Adding support for non-seurat data
+> Additionally, this is written for a seurat object, since we also do many other formats, Id like to create a generalized support for this pipeline so that it is not limited to seurat objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
