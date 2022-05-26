@@ -95,6 +95,31 @@ plot_dimred_seurat(beta_PATCHseq2, color = "gender", color_values = c("pink", "l
 ```
 
 
+# Calculating enrichment of metadata columns
+
+> Since we are interesting in enrichment of a condition in for one signature vs another, we can run a custom GSEA. To do this, we can create a ranked list of cells from the difference of type 1 vs type 2 mean z-scores and then create "cell sets" based on the levels of a seurat_obj@meta.data column. 
+
+> As you can see below, we can select for the meta.data column "condition" which contains two levels; c('T2D', 'nondiabetic'). This allows us to create two separate cell sets based on condition and GSEA is ran with respect to the Z_diff ranked list. We can then see the GSEA stats printed and since both curves show significant enrichment (p < 0.05), they are plotted. 
+
+
+```{r, warning=F, message=F}
+
+library(NixSEA)
+library(msigdbr)
+library(fgsea)
+
+condition_enrichment <- plot_enrichment_seurat(beta_PATCHseq2, "condition")
+```
+
+> We can change the metadata_col to select a different set of values from the seurat_obj@meta.data to create cell sets for GSEA. Below is showing the GSEA by gender, where we see that neither are significant from the printed stats, therefore no plots are drawn. This can be done for any set of values added to the seurat_obj@meta.data.
+
+
+```{r, warning=F, message=F}
+condition_enrichment <- plot_enrichment_seurat(beta_PATCHseq2, "gender")
+```
+
+
+
 # Next Steps
 
 ## Luca's Pipeline
@@ -102,6 +127,45 @@ plot_dimred_seurat(beta_PATCHseq2, color = "gender", color_values = c("pink", "l
 
 ## Adding support for non-seurat data
 > Additionally, this is written for a seurat object, since we also do many other formats, Id like to create a generalized support for this pipeline so that it is not limited to seurat objects.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
