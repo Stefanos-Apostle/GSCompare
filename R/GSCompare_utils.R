@@ -210,7 +210,7 @@ plot_dimred_seurat <- function(seurat_obj, dimred = "umap", color = "", color_va
   d <- ggplot(red_coords, aes(UMAP_1, UMAP_2, color = Rank)) +
     geom_point() +
     theme_classic() +
-    scale_color_viridis_c() +
+    scale_color_viridis_c(option = "inferno") +
     theme(text = element_text(face = "bold", size = 15), plot.title = element_text(hjust = 0.5), line = element_line(size = 1))
 
   plot <- ggarrange(c,d, ncol = 1)

@@ -39,6 +39,22 @@ load("/Volumes/projects_secondary/mnp/stefanos/tools/R-packages/geneset_signatur
 ```
 
 
+# Calculating Gene set score for a single gene set
+
+> Show example of calculating a single gene set.
+
+
+```{r}
+
+
+
+```
+
+
+
+
+
+
 # Running geneset comparison function
 
 > Here I am running the function to calculate geneset signatures and determine Z_diff, this can be set to access different assay slots of the seurat object so that if data is scaled, batch correctied, or other normalizations, we can access any of these data.
