@@ -220,7 +220,8 @@ plot_dimred_seurat <- function(seurat_obj, dimred = "umap", color = "", color_va
 
 
 
-plot_enrichment_seurat <- function(seurat_obj, metadata_col, figure_header = "") {
+plot_enrichment_seurat <- function (seurat_obj, metadata_col, figure_header = "", color_values = c(""), abs = F, pval = 0.05)
+{
   "
   Function to calculate enrichment of a metadata level for signature 1 vs signature 2
 
@@ -232,7 +233,7 @@ plot_enrichment_seurat <- function(seurat_obj, metadata_col, figure_header = "")
   Output:
     prints statistical results of fgsea and will plot enrichment curves if statistically significant enrichment is found.
   "
-  ## creating the ranked list
+
   if (("Z_diff" %in% colnames(seurat_obj@meta.data)) == F) {
     stop("Run compare_geneset_signatures_seurat() to calculate Z_diff before running enrichment analysis")
   }
@@ -240,25 +241,23 @@ plot_enrichment_seurat <- function(seurat_obj, metadata_col, figure_header = "")
   RNK_order <- order(abs(seurat_obj@meta.data$Z_diff), decreasing = T)
   RNK <- seurat_obj@meta.data$Z_diff[RNK_order]
   names(RNK) <- rownames(seurat_obj@meta.data)[RNK_order]
-
-  if ((metadata_col %in% colnames(seurat_obj@meta.data)) == F) {
+  if ((metadata_col %in% colnames(seurat_obj@meta.data)) ==
+      F) {
     stop("metadata_col must be in colnames(seurat_obj@meta.data)")
   }
-
-  ## creating gene sets
   genesets <- list()
   for (i in unique(seurat_obj@meta.data[[metadata_col]])) {
-    genesets[[i]] <- rownames(seurat_obj@meta.data)[which(seurat_obj@meta.data[[metadata_col]] == i)]
+    genesets[[i]] <- rownames(seurat_obj@meta.data)[which(seurat_obj@meta.data[[metadata_col]] ==
+                                                            i)]
   }
-
   sets <- cust_sets(genesets)
-
   res <- fgsea(genesets, RNK, nperm = 10000)
   print(res)
-  plot <- enrichment_analysis(geneset_list = genesets, fgsea_RNK = RNK, msigdb_sets = sets, figure_header = figure_header)
-
+  plot <- enrichment_analysis_dev(geneset_list = genesets, fgsea_RNK = RNK,
+                                  msigdb_sets = sets, figure_header = figure_header, color_values = color_values, abs = abs, pval = pval)
   return(plot)
 }
+
 
 
 
