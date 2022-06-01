@@ -253,7 +253,7 @@ plot_enrichment_seurat <- function (seurat_obj, metadata_col, figure_header = ""
   sets <- cust_sets(genesets)
   res <- fgsea(genesets, RNK, nperm = 10000)
   print(res)
-  plot <- enrichment_analysis_dev(geneset_list = genesets, fgsea_RNK = RNK,
+  plot <- enrichment_analysis(geneset_list = genesets, fgsea_RNK = RNK,
                                   msigdb_sets = sets, figure_header = figure_header, color_values = color_values, abs = abs, pval = pval)
   return(plot)
 }
